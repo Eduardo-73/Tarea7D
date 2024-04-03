@@ -25,7 +25,7 @@ public class App {
     public App() {
         this.codigo = contador++;
         this.nombre = "app" + rd.nextInt(1, 9)
-                + (char) rd.nextInt(6, 79);
+                + (char) rd.nextInt(97, 122);
         String[] conjuntoDesc = {"Peliculas", "Discos", "Caset", "Series",
             "Fotos", "Animales", "Ordenadores", "Coches", "TV", "Institutos"};
         this.descripcion = conjuntoDesc[rd.nextInt(conjuntoDesc.length)];
@@ -88,11 +88,11 @@ public class App {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("#.##");
-        sb.append("Código = ").append(codigo);
-        sb.append(", Nombre = ").append(nombre);
-        sb.append(", Descripción = ").append(descripcion);
-        sb.append(", Tamaño en Kb = ").append(df.format(tamanioKb));
-        sb.append(", Nº Descargas = ").append(numDescargas);
+        sb.append(codigo).append(",");
+        sb.append(nombre).append(",");
+        sb.append(descripcion).append(",");
+        sb.append(df.format(tamanioKb)).append(",");
+        sb.append(numDescargas).append("\n");
         return sb.toString();
     }
 }
