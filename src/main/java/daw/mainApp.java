@@ -4,6 +4,8 @@
  */
 package daw;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,7 +29,8 @@ import javax.xml.bind.Marshaller;
  */
 public class mainApp {
 
-    public static void main(String[] args) throws JAXBException {
+    public static void main(String[] args) throws JAXBException, IOException {
+        crearDirectorio("./JSON");
         List<App> lista = new ArrayList();
         for (int i = 0; i < 50; i++) {
             lista.add(new App());
@@ -35,6 +38,12 @@ public class mainApp {
         guardarDatosApp(lista);
         guardar50Archivos(lista);
         guardarArchivosXML(lista);
+        String ruta = "./copias";
+        crearDirectorio(ruta);
+        copiarFicheros("./appscsv/aplicacionestxt.csv",
+                "./copias/archivoCopia1.csv");
+        copiar50Ficheros(lista);
+        escribirJSON(lista);
     }
 
     private static void crearDirectorio(String ruta) {
@@ -48,6 +57,25 @@ public class mainApp {
         } catch (IOException e) {
             System.out.println("Problema creando el directorio " + ruta);
             System.out.println("Seguramente la ruta está mal escrita o no existe");
+        }
+    }
+
+    public static void copiarFicheros(String rutaOrigen, String rutaDestino) {
+        Path origen = Paths.get(rutaOrigen);
+        Path destino = Paths.get(rutaDestino);
+        try {
+            Files.copy(origen, destino);
+        } catch (IOException e) {
+            System.out.println("Problema copiando el archivo.");
+            System.out.println(e.toString());
+        }
+    }
+
+    public static void copiar50Ficheros(List<App> lista) {
+        int contador = 0;
+        for (App app : lista) {
+            copiarFicheros("./appscsv2/" + app.getNombre(),
+                    "./copias/copia" + ++contador);
         }
     }
 
@@ -101,5 +129,14 @@ public class mainApp {
         serializador.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         serializador.marshal(catalogo, System.out);
         serializador.marshal(catalogo, new File("./appsxml/aplicacionesxml.xml"));
+    }
+
+    private static void escribirJSON(List<App> lista) throws IOException {
+        ObjectMapper mapeador = new ObjectMapper();
+
+        mapeador.registerModule(new JavaTimeModule());
+
+        mapeador.writeValue(new File("./JSON/catalogoApp2.json"),
+                lista.get(5));
     }
 }
